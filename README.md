@@ -13,6 +13,12 @@ btw, zeal8bit is thing which started primarily because of FPGA based video and I
 
 (sad thing about zeal8bit is there is NO schematic published - so its closed here, this is one thing I overlooked a bit, ya)
 
+# spencekonde attinycore for arduino
+https://github.com/SpenceKonde/ATTinyCore
+
+digispark had/has unusual flashing - this is fresh library for all AVR, lots of detailed info about raw updi degug/flash over serial port
+(I finaly used readmyade older modules I had here, quickest thing, despite arduino ide is pita)
+
 # enjoy 
 hope this keyboard init can help anybody with retro system and newer ps2/usb combo keyboards which expect some kind of write/init if you have only passive reading port/bitbang etc ...
 
