@@ -1,0 +1,118 @@
+7alken — Yesterday at 11:01 PM
+hi, kindly please, I have problem with my perixx periboard-409 ps/2 keyboard; it was mentioned somewhere in video (interview with wolfgang, 33:35 below)
+the keyboard is sendinf series of "," only and dont react - what's problem? is possible some workaround? 
+https://www.youtube.com/watch?v=b6aXM_JvKxg
+YouTube
+RETRO is the new black (Wolfgang Kierdorf)
+Background Check #3: Omar from Zeal 8-Bit Computer #zeal-8bit #theb...
+Image
+it is in levels or timing? you sed kbd sends some "reset"??
+
+
+7alken — Yesterday at 11:13 PM
+... I dont have another ps/2 kbd and this is very nice; but I already used BT JDY-33 3V3 module once against 5V uart port on other system, so in case this is not solvable, I can try to wire that BT serial module to back user port RX/TX ... is there some default baudrate expected?
+
+
+HardhatDoozer — Yesterday at 11:19 PM
+Yes. Some PS/2 keyboards need a reset signal before they start working. The Zeal board doesn’t produce that signal. I bought Adesso EasyTouch Mini Keyboard - USB and PS/2 (AKB-110B) and it works fine. I have thought of various ways to perhaps work around the issue but I have no results so far. 
+The Adesso was on Amazon.
+
+
+7alken — Yesterday at 11:22 PM
+okay, thanks a lot for info
+
+
+HardhatDoozer — Yesterday at 11:22 PM
+https://www.reddit.com/r/beneater/s/S0dAbJ44VG talks about a possible circuit but there are people who say it wouldn’t work.  So I’m not sure.
+Reddit
+From the beneater community on Reddit: PS/2 keyboard auto-reset cir...
+Explore this post and more from the beneater community
+From the beneater community on Reddit: "PS/2 keyboard auto-reset circuit - for keyboards that don't automatically enter PS/2 mode on startup"
+
+
+7alken — Yesterday at 11:37 PM
+ya, tnx a lot, I read also the links, will see ... interesting; generally ps/2 protocol is beast, not liked in rc2014 community, they preffer full ps/2 hw interface chip always ))
+https://www.reddit.com/r/beneater/comments/m836ul/ps2_keyboard_not_working_on_the_6502_but_is/
+Reddit
+From the beneater community on Reddit: PS/2 Keyboard not working on...
+Explore this post and more from the beneater community
+From the beneater community on Reddit: "PS/2 Keyboard not working on the 6502 but is working on a Desktop Computer"
+in your post, at the end guy says it works for him, so may be I will try to do some mod...
+
+
+7alken — 12:38 AM
+umm, tiniest thing I have here is attiny1624 soic14, so if this is correct, it may work too?? - "chatgpt aided design of reset circuit using mcu"
+https://chatgpt.com/share/686462ef-ed2c-8000-835e-2aa5e0a3de2f
+ChatGPT
+ChatGPT - PS2 reset AVR code
+Shared via ChatGPT
+Image
+this is very compact description of protocol ... nice
+https://www-ug.eecg.utoronto.ca/desl/nios_devices_SoC/datasheets/PS2%20Protocol.htm
+
+
+HardhatDoozer — 1:08 AM
+Another possible solution could be to attach one of the PIO pins in open collector do the reset sequence in the BIOS. Just solder a jumper wire to the bottom of the Zeal keyboard connector. You could even try a push button that connects to ground maybe.
+I made an ATTiny85 pcb to test out various theories but I haven’t worked through it yet. 
+7alken — 1:22 AM
+ya, also thought about some free pio pins and the reset done by firmware... but sadly, will be good to have schematic; this is what I overlooked initially ))
+now I am peeking inside periboard, may be something will fit there... to be transparent elsewhere too; btw, kbd itself has probably mcu > z80 too, so no purity at all 🙂
+
+
+Zeal 8-bit — 1:41 AM
+Hey guys,
+About the Perixw keyboards, I did some in-depth search and for some reason, when it boots, after the self test, it wants the host to send an ACK byte, that NOT part of the PS/2 protocol.
+Trying to reset it manually after a boot doesn't solve the issue, it still need an ACK byte, so pulling the data/clock lines low to simulate a RESET command won't work
+If I recall correctly, the ACK byte is 0xFA. If you want to use the Perixx keyboard, you have three main choices:
+Have a proxy board between Zeal and the keyboard, that will send this ACK on boot
+Take two I/Os from the user port that you connect to the PS/2 port data and clock lines and you bitbang that ack byte on boot. You wont' be able to use these pins later on though since they would be physically connected to the keyboard
+You hack up a small MCU that you solder at the bottom of the board and it will send the ACK on boot
+
+
+Zeal 8-bit — 1:49 AM
+You can use the ATTiny1624 for that. It's big but you only need 2 I/Os so you can solder only 4 pins (VCC, Gnd, I/Os) 
+
+
+7alken — 1:51 AM
+Hi Omar, thanks a lot, ya, will see, that mcu inside perixx can be okay also, it seems; It has surprise screw under sticker but its opened )) ... I have soic14 here, so fingers X'ed;
+Image
+
+
+Zeal 8-bit — 1:53 AM
+You plan on modifying its MCU? 😄
+
+
+7alken — 1:54 AM
+no no ... fit that attiny1624 there )) ... as the keyboard will be happy elsewhere too ??
+Zeal 8-bit — 1:55 AM
+Yes that would work too, check which MCU is used inside the Perixx too, I am curious haha
+
+
+7alken — 1:56 AM
+I have 4 of them here, was wondering how hard it will be aroun dsome retro ... this is neat test case .... ya, few minutes .....
+
+
+7alken — 2:04 AM
+quite unusual "connection", never saw that ))
+Image
+Image
+mcu is HOLTEK  HT82B40R
+Image
+
+
+Zeal 8-bit — 2:11 AM
+Image
+8-bit MCU that supports 5V, PS/2 and USB 🤔
+
+
+7alken — 2:16 AM
+ya, quite decent with retro  ... my dell wireless combo uses some nordic cortex-M4F ))
+Zeal 8-bit — 2:18 AM
+If you manage to backup the firmware in it, we can try to hack it haha
+
+
+7alken — 2:21 AM
+haha, thats too much, thanks for now Omar, will see , I am familiar with these avr updi more 🙂 -Petr
+Zeal 8-bit — 2:23 AM
+No worries. I just saw that it's OTP so not possible to reprogram it unfortunately 😅
+
